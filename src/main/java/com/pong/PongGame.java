@@ -15,6 +15,8 @@ public class PongGame extends JPanel implements MouseMotionListener {
     private Ball ball;
     //new private variables
     private Paddle playerPaddle;
+    private Wall wall;
+    private Speedup green;
     // step 1 add any other private variables you may need to play the game.
 
     public PongGame() {
@@ -32,6 +34,8 @@ public class PongGame extends JPanel implements MouseMotionListener {
 
         //create any other objects necessary to play the game.
          playerPaddle = new Paddle(30, 240, 50, 9, Color.WHITE);
+         wall = new Wall (320, 185, 120, 10, Color.BLUE);
+         green = new Speedup(320, 10, 150, 20);
     }
 
     // precondition: None
@@ -58,6 +62,8 @@ public class PongGame extends JPanel implements MouseMotionListener {
         ball.draw(g);
         aiPaddle.draw(g);
         playerPaddle.draw(g); 
+        wall.draw(g);
+        green.draw(g);
         //call the "draw" function of any visual component you'd like to show up on the screen.
 
     }
@@ -69,13 +75,16 @@ public class PongGame extends JPanel implements MouseMotionListener {
         //add commands here to make the game play propperly
         ball.moveBall();
         aiPaddle.moveY(ball.getY());
-
-        if (aiPaddle.isTouching(ball)) {
-           ball.reverseX();
-        }
  
         pointScored();
-
+        if (ball.getY() <= 0 || ball.getY() >= 480){
+            ball.reverseY();
+        }
+        playerPaddle.moveY(userMouseY);
+        if(aiPaddle.isTouching(ball) || playerPaddle.isTouching(ball) || wall.isTouching(ball)){
+            ball.reverseX();
+        }
+        
     }
 
     // precondition: ball is a non-null object that exists in the world
@@ -85,7 +94,16 @@ public class PongGame extends JPanel implements MouseMotionListener {
     // pixels) and the ai scores
     // if the ball goes off the left edge (0)
     public void pointScored() {
-
+        if (ball.getX()<= 0){
+            ball.setX(320);
+            ball.sety(240);
+            aiScore++;
+        }
+        if (ball.getX()>= 640){
+            ball.setX(320);
+            ball.sety(240);
+            playerScore++;
+        }
     }
 
     // you do not need to edit the below methods, but please do not remove them as
