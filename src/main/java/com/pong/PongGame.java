@@ -17,6 +17,7 @@ public class PongGame extends JPanel implements MouseMotionListener {
     private Paddle playerPaddle;
     private Wall wall;
     private Speedup green;
+    private SlowDown yellow; 
     // step 1 add any other private variables you may need to play the game.
 
     public PongGame() {
@@ -34,8 +35,9 @@ public class PongGame extends JPanel implements MouseMotionListener {
 
         //create any other objects necessary to play the game.
          playerPaddle = new Paddle(30, 240, 50, 9, Color.WHITE);
-         wall = new Wall (320, 185, 120, 10, Color.BLUE);
-         green = new Speedup(320, 10, 150, 20);
+         wall = new Wall (320, 175, 100, 9, Color.BLUE);
+         green = new Speedup(320, 25, 130, 30);
+         yellow = new SlowDown (320, 320, 105, 30);
     }
 
     // precondition: None
@@ -64,6 +66,7 @@ public class PongGame extends JPanel implements MouseMotionListener {
         playerPaddle.draw(g); 
         wall.draw(g);
         green.draw(g);
+        yellow.draw(g);
         //call the "draw" function of any visual component you'd like to show up on the screen.
 
     }
@@ -75,16 +78,24 @@ public class PongGame extends JPanel implements MouseMotionListener {
         //add commands here to make the game play propperly
         ball.moveBall();
         aiPaddle.moveY(ball.getY());
- 
+        playerPaddle.moveY(userMouseY);
         pointScored();
-        if (ball.getY() <= 0 || ball.getY() >= 480){
+
+        if (ball.getY() <= 0 || ball.getY() >= 460){
             ball.reverseY();
         }
-        playerPaddle.moveY(userMouseY);
+        
         if(aiPaddle.isTouching(ball) || playerPaddle.isTouching(ball) || wall.isTouching(ball)){
             ball.reverseX();
         }
-        
+        if (green.isTouching(ball) && ball.getChangeX()<8){
+            ball.setChangeX((ball.getChangeX()* 1.15));
+
+        }
+        if (yellow.isTouching(ball) && ball.getChangeX()>5){
+            ball.setChangeX((ball.getChangeX()* 0.85));
+
+        }
     }
 
     // precondition: ball is a non-null object that exists in the world
@@ -97,11 +108,14 @@ public class PongGame extends JPanel implements MouseMotionListener {
         if (ball.getX()<= 0){
             ball.setX(320);
             ball.sety(240);
+            ball.setChangeX(10); // reset ball speed
             aiScore++;
+            
         }
         if (ball.getX()>= 640){
             ball.setX(320);
             ball.sety(240);
+            ball.setChangeX(10); // reset ball speed
             playerScore++;
         }
     }

@@ -7,7 +7,7 @@ public class SlowDown {
 	private int y;
 	private int height;
 	private int width;
-	private Color color = Color.RED;
+	private Color color = Color.YELLOW;
 	
 	
 	
